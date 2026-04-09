@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Practical No.6 (WD) - Scholarship / Seminar Registration</title>
+  <style>
+    body{font-family:Segoe UI,Roboto,Arial;max-width:900px;margin:28px auto;padding:16px;color:#222}
+    h1{font-size:1.4rem;margin-bottom:8px}
+    form{background:#f9f9f9;padding:16px;border-radius:8px;border:1px solid #e0e0e0}
+    fieldset{border:1px solid #ccc;padding:12px;border-radius:6px;margin-bottom:12px}
+    legend{font-weight:600;padding:0 6px}
+    label{display:block;margin:8px 0 4px}
+    input[type=text], input[type=email], input[type=tel], select, textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .inline{display:inline-block;margin-right:12px}
+    .actions{text-align:right}
+    button{background:#0066cc;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+    button:disabled{opacity:0.6;cursor:not-allowed}
+    #summary{margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px dashed #bdbdbd}
+  </style>
+</head>
+<body>
+  <h1>Practical No.6 (WD) — Scholarship / Seminar Registration</h1>
+
+  <form id="regForm">
+    <fieldset>
+      <legend>Personal Details</legend>
+      <div class="row">
+        <div class="col">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" name="fullname" placeholder="Your full name" required>
+        </div>
+        <div class="col">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="phone">Contact No.</label>
+          <input type="tel" id="phone" name="phone" placeholder="Phone number">
+        </div>
+        <div class="col">
+          <label for="year">Year / Semester</label>
+          <select id="year" name="year">
+            <option value="">-- Select --</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+            <option>4th Year</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Registration Type</legend>
+      <label class="inline"><input type="radio" name="regType" value="Scholarship" checked> Scholarship</label>
+      <label class="inline"><input type="radio" name="regType" value="Seminar"> Seminar</label>
+
+      <div style="margin-top:10px">
+        <label for="course">Course / Program</label>
+        <select id="course" name="course">
+          <option value="">-- Select course --</option>
+          <option>B.Sc. Computer Science</option>
+          <option>BCA</option>
+          <option>MCA</option>
+          <option>Diploma</option>
+        </select>
+      </div>
+
+    </fieldset>
+
+    <fieldset>
+      <legend>Preferences & Topics</legend>
+      <label>Interested Topics (select all that apply):</label>
+      <label class="inline"><input type="checkbox" name="topics" value="Web Development"> Web Development</label>
+      <label class="inline"><input type="checkbox" name="topics" value="Data Science"> Data Science</label>
+      <label class="inline"><input type="checkbox" name="topics" value="AI/ML"> AI/ML</label>
+      <label class="inline"><input type="checkbox" name="topics" value="DevOps"> DevOps</label>
+
+      <div style="margin-top:10px">
+        <label for="notes">Additional Notes</label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Any extra information..."></textarea>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit">Submit Registration</button>
+    </div>
+
+    <div id="summary" aria-live="polite" style="display:none"></div>
+  </form>
+
+  <script>
+    const form = document.getElementById('regForm');
+    const summary = document.getElementById('summary');
+
+    function getCheckedValues(name){
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i=>i.value);
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const fullname = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const regType = document.querySelector('input[name="regType"]:checked')?.value || '';
+      const course = document.getElementById('course').value;
+      const phone = document.getElementById('phone').value.trim();
+      const year = document.getElementById('year').value;
+      const topics = getCheckedValues('topics');
+      const notes = document.getElementById('notes').value.trim();
+
+      // basic validation
+      if(!fullname || !email){
+        alert('Please provide your name and email.');
+        return;
+      }
+
+      // build summary
+      const parts = [];
+      parts.push(`<strong>Name:</strong> ${escapeHtml(fullname)}`);
+      parts.push(`<strong>Email:</strong> ${escapeHtml(email)}`);
+      if(phone) parts.push(`<strong>Phone:</strong> ${escapeHtml(phone)}`);
+      if(year) parts.push(`<strong>Year:</strong> ${escapeHtml(year)}`);
+      parts.push(`<strong>Registration Type:</strong> ${escapeHtml(regType)}`);
+      if(course) parts.push(`<strong>Course:</strong> ${escapeHtml(course)}`);
+      parts.push(`<strong>Topics:</strong> ${topics.length? escapeHtml(topics.join(', ')) : 'None selected'}`);
+      if(notes) parts.push(`<strong>Notes:</strong> ${escapeHtml(notes)}`);
+
+      summary.innerHTML = parts.map(p=>`<div style="margin:6px 0">${p}</div>`).join('');
+      summary.style.display = 'block';
+      // optional: reset after submit
+      // form.reset();
+    });
+
+    function escapeHtml(s){
+      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+    }
+  </script>
+</body>
+</html>
